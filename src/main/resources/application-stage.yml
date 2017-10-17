@@ -1,0 +1,33 @@
+# Spring properties
+spring:
+  application:
+    name: user-microservice
+  cloud:
+    config:
+      discovery:
+        enabled: false
+  data:
+    mongodb:
+      database: ${DB_NAME}
+      host: ${DB_HOST}
+      port: ${DB_PORT}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+# HTTP Server
+server:
+  port: 17101 #${SERVER_PORT}   # HTTP (Tomcat) port
+
+# Discovery Server Access
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    instanceId: ${spring.application.name}:${random.int}
+    metadataMap:
+      instanceId: ${spring.application.name}:${random.int}
+
+logging:
+  level:
+    com.netflix.discovery: 'OFF'
+    org.springframework.cloud: 'DEBUG'
