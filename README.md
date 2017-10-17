@@ -8,12 +8,12 @@
 ### To Run ###
 
 * mvn install
-* Go to target/ folder and `java -jar example-microservice...[something-something].jar`
+* Go to target/ folder and `java -jar user-microservice...[something-something].jar`
 
 ***OR***
 
 * Open it in IntelliJ IDEA with the maven plugin installed
-* Run `ExampleApplication`
+* Run `UserApplication`
 
 
 ### MongoDB credentials can be found in `resources/application.yml` ###
