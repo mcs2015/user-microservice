@@ -4,6 +4,7 @@ package com.stl.user.controller;
 import com.stl.user.dto.ResponseDTO;
 import com.stl.user.model.User;
 import com.stl.user.service.UserService;
+import com.stl.user.util.STLValidator;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/stl/customer")
+@RequestMapping("/api/stl/user")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -31,7 +32,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(path="/account" ,method = RequestMethod.POST)
+    @RequestMapping(path="/signup" ,method = RequestMethod.POST)
     public ResponseEntity<Object> createAccount(@RequestBody User user) {
         if(user != null){
             //Checking username is already taken
@@ -74,4 +75,58 @@ public class UserController {
         return new ResponseEntity<Object>(notFound, HttpStatus.NOT_FOUND);
 
     }
+
+
+    /**
+     * Login user
+     * @param userToUpdate
+     * @return
+     */
+    @RequestMapping(path="/change/password" ,method = RequestMethod.POST)
+    public ResponseEntity<Object> changePassword(@RequestBody User userToUpdate) {
+
+        if(userToUpdate == null){
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(StringUtils.isEmpty(userToUpdate.getPassword()) || StringUtils.isEmpty(userToUpdate.getNewPassword())){
+            return new ResponseEntity<Object>(new ResponseDTO(true,"Passwords cannot be blank"),HttpStatus.BAD_REQUEST);
+        }
+
+        if(StringUtils.isEmpty(userToUpdate.getUserName())){
+            return new ResponseEntity<Object>(new ResponseDTO(true,"Username cannot be blank"),HttpStatus.BAD_REQUEST);
+        }
+
+        String userName = userToUpdate.getUserName();
+        String oldPwd = userToUpdate.getPassword();
+        String newPwd = userToUpdate.getNewPassword();
+
+        if(!STLValidator.validatePassword(oldPwd) || !STLValidator.validatePassword(newPwd)){
+            return new ResponseEntity<Object>(new ResponseDTO(true,"Passwords are weak"),HttpStatus.BAD_REQUEST);
+        }
+
+        String hashedOldPwd = STLValidator.hashPassword(oldPwd);
+        String hashedNewPwd = STLValidator.hashPassword(newPwd);
+
+        Optional<User> userInDbOpt = userService.getUserByUserName(userName);
+        if(!userInDbOpt.isPresent()){
+            return new ResponseEntity<Object>(new ResponseDTO(true,"No user found"),HttpStatus.NOT_FOUND);
+        }else{
+            User userInDb = userInDbOpt.get();
+            if(!userService.arePasswordsEqual(userInDb.getPassword(), hashedOldPwd)){
+                //The user given old password does not match with the password in the db
+                return new ResponseEntity<Object>(new ResponseDTO(false,"Invalid current password"),HttpStatus.UNAUTHORIZED);
+
+            }
+
+            //Validations passed. Update the new password
+            userService.changePassword(userInDb, hashedNewPwd);
+            return new ResponseEntity<Object>(new ResponseDTO(false,"Passwords changed successfully"),HttpStatus.OK);
+        }
+
+
+
+    }
+
+
 }

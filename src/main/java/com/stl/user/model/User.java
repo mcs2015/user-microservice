@@ -3,6 +3,7 @@ package com.stl.user.model;
 
 import com.stl.user.repository.Dto;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Document(collection = "user")
 public class User extends Dto{
     @Id
-    private String customerId;
+    private String userId;
     private String firstName;
     private String lastName;
     private Integer postalCode;
@@ -21,7 +22,16 @@ public class User extends Dto{
     private LocalDateTime dateRegistered;
     private String userName;
     private String password;
+    @Transient
+    private String newPassword;
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -101,5 +111,15 @@ public class User extends Dto{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

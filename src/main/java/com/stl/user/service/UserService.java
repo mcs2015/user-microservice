@@ -75,4 +75,15 @@ public class UserService {
 
     }
 
+    public void changePassword(User userToChange, String newPassword){
+        userToChange.setPassword(newPassword);
+        userRepository.save(userToChange);
+
+    }
+
+    public boolean arePasswordsEqual(String userGivenPwd, String actualPwd){
+        return userGivenPwd.equals(actualPwd);
+
+    }
+
 }
