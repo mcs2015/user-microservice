@@ -22,6 +22,7 @@ public class User extends Dto{
     private LocalDateTime dateRegistered;
     private String userName;
     private String password;
+    private String emailAddress;
     @Transient
     private String newPassword;
 
@@ -113,7 +114,13 @@ public class User extends Dto{
         this.password = password;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
 
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
     public String getNewPassword() {
         return newPassword;

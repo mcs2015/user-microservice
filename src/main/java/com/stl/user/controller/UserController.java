@@ -78,7 +78,7 @@ public class UserController {
 
 
     /**
-     * Login user
+     * Cahnge password
      * @param userToUpdate
      * @return
      */
@@ -127,6 +127,41 @@ public class UserController {
 
 
     }
+
+
+    /**
+     * Sending password reset link to the user email adderess
+     * @param emailAddress
+     * @param userName
+     * @return
+     */
+    @RequestMapping(path="/recover/password" ,method = RequestMethod.GET)
+    public ResponseEntity<Object> recoverPassword(String emailAddress, String userName) {
+        if(StringUtils.isEmpty(emailAddress) || StringUtils.isEmpty(userName)){
+            return new ResponseEntity<Object>( HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<User> userInDbOpt = userService.getUserByUserName(userName);
+
+        if(userInDbOpt.isPresent()){
+            User userToRecover = userInDbOpt.get();
+
+            if(emailAddress.equals(userToRecover.getEmailAddress())){
+                /**
+                 * @TODO Sending the password reset link to the address
+                 */
+                logger.debug("Password reset link sent to the "+userToRecover.getEmailAddress());
+                return new ResponseEntity<Object>(new ResponseDTO(false, "Password reset link sent successfully to "+userToRecover.getEmailAddress()), HttpStatus.OK);
+            }
+
+
+
+        }
+
+        return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+
+    }
+
 
 
 }
